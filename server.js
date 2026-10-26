@@ -82,7 +82,7 @@ app.get('/health', (req,res)=> res.json({ok:true}));
 app.get('/auth/canva', (req,res)=>{
   const base = getBaseUrl(req);
   const redirect_uri = `${base}/auth/canva/callback`;
-  const scope = 'asset:read asset:write brand_template:content:read brand_template:meta:read design:content:read design:content:write design:meta:read folder:read folder:write profile:read';
+  const scope = 'asset:read asset:write brand_template:content:read brand_template:meta:read design:content:read design:content:write design:meta:read';
   const authUrl = `https://www.canva.com/api/oauth/authorize?code_challenge=${CODE_CHALLENGE}&code_challenge_method=S256&scope=${encodeURIComponent(scope)}&response_type=code&client_id=${CANVA_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirect_uri)}`;
   res.redirect(authUrl);
 });
