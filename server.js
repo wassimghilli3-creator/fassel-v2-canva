@@ -8,7 +8,7 @@ const SECRET = process.env.CANVA_CLIENT_SECRET || '';
 const VER = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
 const CHAL = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
 
-app.get('/',(req,res)=>res.send('<h1>FASSEL V2 OK</h1><a href="/a/c">renew</a>'));
+app.get('/',(req,res)=>res.send('<h1>FASSEL V2 OK - NEW ENDPOINT</h1><a href="/a/c">renew</a>'));
 app.get('/health',(req,res)=>res.json({ok:true}));
 
 function getBase(req){
@@ -26,7 +26,7 @@ app.get('/a/c',(req,res)=>{
 
 app.get('/a/c/callback', async (req,res)=>{
   const code = req.query.code;
-  if(!code) return res.send('No code <pre>'+JSON.stringify(req.query,null,2)+'</pre>');
+  if(!code) return res.send('No code <pre>'+JSON.stringify(req.query,null,2)+'</pre><a href="/a/c">retry</a>');
   const base = getBase(req);
   const redirect = base + '/a/c/callback';
   const p = new URLSearchParams();
@@ -37,18 +37,19 @@ app.get('/a/c/callback', async (req,res)=>{
   p.append('client_secret',SECRET);
   p.append('redirect_uri',redirect);
   try{
-    const r = await fetch('https://api.canva.com/rest/oauth/token',{
+    // الجديد الخدام
+    const r = await fetch('https://api.canva.com/rest/v1/oauth/token',{
       method:'POST',
       headers:{'Content-Type':'application/x-www-form-urlencoded'},
       body:p.toString()
     });
     const txt = await r.text();
     let d;
-    try{ d = JSON.parse(txt); }catch{ return res.send('<h1>HTML Response from Canva</h1><pre>'+txt.substring(0,2000)+'</pre><p>Status: '+r.status+'</p>'); }
+    try{ d = JSON.parse(txt); }catch{ return res.send('<h1>HTML Error</h1><pre>'+txt.substring(0,2000)+'</pre>'); }
     if(d.access_token){
-      return res.send('<h1>Token Renewed SUCCESS</h1><p>Token OK: '+d.access_token.substring(0,20)+'...</p><p>expires_in: '+d.expires_in+'</p>');
+      return res.send('<h1>Token Renewed SUCCESS! NEW ENDPOINT WORKS</h1><p>Token: '+d.access_token.substring(0,30)+'...</p><p>expires_in: '+d.expires_in+'</p><a href="/">home</a>');
     } else {
-      return res.send('<h1>Token Failed</h1><pre>'+JSON.stringify(d,null,2)+'</pre><p>Raw: '+txt.substring(0,500)+'</p>');
+      return res.send('<h1>Failed</h1><pre>'+JSON.stringify(d,null,2)+'</pre><p>Raw: '+txt.substring(0,1000)+'</p>');
     }
   }catch(e){ res.send('Error: '+e.message); }
 });
