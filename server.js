@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json({limit:'1mb'}));
 const PORT = process.env.PORT || 10000;
 const CLIENT_ID = process.env.CANVA_CLIENT_ID || 'OC-AaFbjj1F4ytM';
-const CLIENT_SECRET = process.env.【entity-CANVA¦canonical_name=Canva】_CLIENT_SECRET || '';
+const CLIENT_SECRET = process.env.CANVA_CLIENT_SECRET || '';
 const CODE_VERIFIER = 'dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk';
 const CODE_CHALLENGE = 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM';
 const SALES_PATH = path.join(__dirname, 'fassel_v2', 'sales.json');
