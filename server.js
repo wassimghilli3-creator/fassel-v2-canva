@@ -26,7 +26,7 @@ app.get('/a/c',(req,res)=>{
 
 app.get('/a/c/callback', async (req,res)=>{
   const code = req.query.code;
-  if(!code) return res.send('<pre>'+JSON.stringify(req.query,null,2)+'</pre>');
+  if(!code) return res.send('No code <pre>'+JSON.stringify(req.query,null,2)+'</pre>');
   const base = getBase(req);
   const redirect = base + '/a/c/callback';
   const p = new URLSearchParams();
@@ -36,22 +36,21 @@ app.get('/a/c/callback', async (req,res)=>{
   p.append('client_id',ID);
   p.append('client_secret',SECRET);
   p.append('redirect_uri',redirect);
-  const eps = [
-    'https://api.canva.com/rest/oauth/token',
-    'https://api.canva.com/oauth/token',
-    'https://www.canva.com/api/oauth/token'
-  ];
-  let last = null;
-  for(const ep of eps){
-    try{
-      const r = await fetch(ep,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:p});
-      const d = await r.json();
-      if(d.access_token){
-        return res.send('<h1>Token SUCCESS via '+ep+'</h1>');
-      } else last = d;
-    }catch(e){ last = e.message; }
-  }
-  res.send('<pre>'+JSON.stringify(last,null,2)+'</pre>');
+  try{
+    const r = await fetch('https://api.canva.com/rest/oauth/token',{
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:p.toString()
+    });
+    const txt = await r.text();
+    let d;
+    try{ d = JSON.parse(txt); }catch{ return res.send('<h1>HTML Response from Canva</h1><pre>'+txt.substring(0,2000)+'</pre><p>Status: '+r.status+'</p>'); }
+    if(d.access_token){
+      return res.send('<h1>Token Renewed SUCCESS</h1><p>Token OK: '+d.access_token.substring(0,20)+'...</p><p>expires_in: '+d.expires_in+'</p>');
+    } else {
+      return res.send('<h1>Token Failed</h1><pre>'+JSON.stringify(d,null,2)+'</pre><p>Raw: '+txt.substring(0,500)+'</p>');
+    }
+  }catch(e){ res.send('Error: '+e.message); }
 });
 
 app.post(['/webhook/payhip','/api/webhook/payhip'],(req,res)=>res.json({ok:true}));
