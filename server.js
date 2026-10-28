@@ -95,5 +95,9 @@ app.get('/api/test/sale', async (req, res) => {
 app.get('/api/sales', (req, res) => res.json(sales));
 app.get('/api/visits', (req, res) => { visits++; res.json({ visits }); });
 app.get('/health', (req, res) => res.json({ ok: true, token: !!tokens.refresh }));
+const path = require('path');
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 app.listen(3000, () => console.log('FASSEL V2 Running'));
 module.exports = app;
